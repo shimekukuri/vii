@@ -16,7 +16,7 @@ pub inline fn vecAsSlice(comptime T: type, vec: *@Vector(suggestVectorLength(T) 
 ///the two types while operating on the same backing data. The vector length is automatically Selected as by std.simd.suggestVectorLength
 ///It is recomended that you use whatever length is generated from suggestVectorLength as it is going to be targeting
 ///whatever cpu features are available at compile time, and the flags that were passed into the build command.
-pub inline fn sliceAsVec(comptime T: type, slice: []align(@alignOf(@Vector(suggestVectorLength(T) orelse 1, T))) T) *@Vector(suggestVectorLength(T) orelse 1, T) {
+pub inline fn sliceAsVec(comptime T: type, slice: VectorAlignedSlice(T)) *@Vector(suggestVectorLength(T) orelse 1, T) {
     return @ptrCast(@alignCast(slice));
 }
 
@@ -27,7 +27,18 @@ test "sliceAsVecSuceeds" {
     try testing.expect(@TypeOf(x) == *@Vector(suggestVectorLength(u8) orelse 1, u8));
 }
 
-test "sliceAsVecFailsWrongAlignment" {}
+test "sliceAsVecFailsWrongAlignment" {
+    //var exampleArr = [_]u8{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 };
+    //const exampleSlice = exampleArr[0..];
+}
+
+///Given T Describes a slice that's alignment matches that of it's vectors counterpart based upon available CPU features
+pub inline fn VectorAlignedSlice(comptime T: type) type {
+    const vector_len = suggestVectorLength(T) orelse 1;
+    const VectorType = @Vector(vector_len, T);
+    const alignment = @alignOf(VectorType);
+    return []align(alignment) T;
+}
 
 pub fn generateOptimizedVectorType(comptime T: type) type {
     const N = std.simd.suggestVectorLength(T);
