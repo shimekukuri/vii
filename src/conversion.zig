@@ -27,11 +27,6 @@ test "sliceAsVecSuceeds" {
     try testing.expect(@TypeOf(x) == *@Vector(suggestVectorLength(u8) orelse 1, u8));
 }
 
-test "sliceAsVecFailsWrongAlignment" {
-    //var exampleArr = [_]u8{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3 };
-    //const exampleSlice = exampleArr[0..];
-}
-
 ///Given T Describes a slice that's alignment matches that of it's vectors counterpart based upon available CPU features
 pub inline fn VectorAlignedSlice(comptime T: type) type {
     const vector_len = suggestVectorLength(T) orelse 1;
