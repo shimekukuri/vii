@@ -35,8 +35,8 @@ pub inline fn VectorAlignedSlice(comptime T: type) type {
     return []align(alignment) T;
 }
 
-pub fn generateOptimizedVectorType(comptime T: type) type {
-    const N = std.simd.suggestVectorLength(T);
+pub fn optimizedVectorType(comptime T: type) type {
+    const N = std.simd.suggestVectorLength(T) orelse 1;
     return @Vector(N, T);
 }
 

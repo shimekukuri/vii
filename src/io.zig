@@ -1,29 +1,35 @@
 //! This module provides functionality for working with IO in the context of Simd operations and vector types
-//! IE when reading a source we want to ensure the methods in which we are storing it allow for proper usage within simd
+//! IE when reading a source we want to ensure that we  are storing it allow for proper usage with simd
 //! more explicitly we want to ensure that alignment is correct.
 const std = @import("std");
 const Allocator = std.mem.Allocator;
+const Testing = std.testing;
+
 const constants = @import("constants.zig");
 
-pub fn readFileAligned(path: []const u8, allocator: Allocator) ![]u8 {
+const conversions = @import("conversion.zig");
+const optimizeVectorType = conversions.optimizedVectorType;
+const VectorAlignedSlice = conversions.VectorAlignedSlice;
+
+pub fn alignedReadFile(path: []const u8, allocator: std.mem.Allocator) !VectorAlignedSlice(u8) {
     var pathBuff: [std.fs.max_path_bytes]u8 = undefined;
     const fpath = try std.fs.realpath(path, &pathBuff);
     const file = try std.fs.openFileAbsolute(fpath, .{ .mode = .read_only });
     defer file.close();
     const fileSize = try file.getEndPos();
 
-    const aligned_size = std.mem.alignForward(usize, fileSize, constants.u8Len);
-    const buff = try allocator.alignedAlloc(u8, @alignOf(constants.u8Len), aligned_size);
-
-    // Initialize the padding bytes to a safe value (like 0 or space)
+    const aligned_size = std.mem.alignForward(usize, fileSize, std.simd.suggestVectorLength(u8).?);
+    const buff = try allocator.alignedAlloc(u8, std.mem.Alignment.of(optimizeVectorType(u8)), aligned_size);
     @memset(buff, 0);
 
-    // FIXED: Read the actual file content
-    //
+    _ = try file.readAll(buff);
 
-    return buff[0..fileSize]; // Return slice with original file size
+    return buff;
 }
 
-test "can readfile" {
-    readFileAligned(, allocator: Allocator)
+test "alignReadFileAddsPadding" {
+    const testingData = "This is a test";
+    const x = try alignedReadFile("./src/testFile", Testing.allocator);
+    defer Testing.allocator.free(x);
+    try Testing.expect(!std.mem.eql(u8, testingData[(testingData.len - 1)..], x[(x.len - 1)..]));
 }
