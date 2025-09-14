@@ -2,10 +2,13 @@
 //! IE when reading a source we want to ensure that we  are storing it allow for proper usage with simd
 //! more explicitly we want to ensure that alignment is correct.
 const std = @import("std");
-const Allocator = std.mem.Allocator;
-const Testing = std.testing;
-
 const constants = @import("constants.zig");
+const testing = std.testing;
+
+const mem = std.mem;
+const Allocator = mem.Allocator;
+const Alignment = mem.Alignment;
+const eql = mem.eql;
 
 const conversions = @import("conversion.zig");
 const optimizeVectorType = conversions.optimizedVectorType;
@@ -19,7 +22,7 @@ pub fn alignedReadFile(path: []const u8, allocator: std.mem.Allocator) !VectorAl
     const fileSize = try file.getEndPos();
 
     const aligned_size = std.mem.alignForward(usize, fileSize, std.simd.suggestVectorLength(u8).?);
-    const buff = try allocator.alignedAlloc(u8, std.mem.Alignment.of(optimizeVectorType(u8)), aligned_size);
+    const buff = try allocator.alignedAlloc(u8, Alignment.of(optimizeVectorType(u8)), aligned_size);
     @memset(buff, 0);
 
     _ = try file.readAll(buff);
@@ -29,7 +32,7 @@ pub fn alignedReadFile(path: []const u8, allocator: std.mem.Allocator) !VectorAl
 
 test "alignReadFileAddsPadding" {
     const testingData = "This is a test";
-    const x = try alignedReadFile("./src/testFile", Testing.allocator);
-    defer Testing.allocator.free(x);
-    try Testing.expect(!std.mem.eql(u8, testingData[(testingData.len - 1)..], x[(x.len - 1)..]));
+    const x = try alignedReadFile("./src/testFiles/alignReadFileAddsPadding", testing.allocator);
+    defer testing.allocator.free(x);
+    try testing.expect(!eql(u8, testingData[(testingData.len - 1)..], x[(x.len - 1)..]));
 }
