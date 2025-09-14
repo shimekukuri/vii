@@ -25,7 +25,7 @@ const VectorAlignedSlice = conversions.VectorAlignedSlice;
 
 ///Reads from a file into a buffer optimally aligned for working with simd. Given your Cpu features the buffer is padded
 ///to the end of the next aligned address. Returned buffer is head allocated and needs to be freed.
-pub fn alignedReadFile(path: []const u8, allocator: std.mem.Allocator) !VectorAlignedSlice(u8) {
+pub fn alignedReadFile(path: []const u8, allocator: Allocator) !VectorAlignedSlice(u8) {
     var pathBuff: [max_path_bytes]u8 = undefined;
     const fpath = try realpath(path, &pathBuff);
     const file = try openFileAbsolute(fpath, .{ .mode = .read_only });
@@ -50,5 +50,5 @@ test "alignReadFileAddsPadding" {
 
 test "alignedReadFileSucceeds" {
     const testingData = "This is a test";
-    const buff = testing.allocator.alignedAlloc(u8, , n: usize)
+    const buff = testing.allocator.alignedAlloc(u8, Alignment.@"64", 4);
 }
