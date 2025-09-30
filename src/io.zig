@@ -47,8 +47,3 @@ test "alignReadFileAddsPadding" {
     defer testing.allocator.free(x);
     try testing.expect(!eql(u8, testingData[(testingData.len - 1)..], x[(x.len - 1)..]));
 }
-
-test "alignedReadFileSucceeds" {
-    const testingData = "This is a test";
-    const buff = testing.allocator.alignedAlloc(u8, Alignment.@"64", 4);
-}
