@@ -24,14 +24,14 @@ pub const BoolTrueVec32Bit: @Vector(u32Len, bool) = @splat(true);
 pub const BoolFalseVec64Bit: @Vector(u64Len, bool) = @splat(false);
 pub const BoolTrueVec64Bit: @Vector(u64Len, bool) = @splat(true);
 
-pub const zeroVec8Bit: @Vector(u8Len, u8) = @splat(0);
-pub const oneVec8Bit: @Vector(u8Len, u8) = @splat(1);
+pub const ZeroVec8Bit: @Vector(u8Len, u8) = @splat(0);
+pub const OneVec8Bit: @Vector(u8Len, u8) = @splat(1);
 
-pub const zeroVec16Bit: @Vector(u16Len, u16) = @splat(0);
-pub const oneVec16Bit: @Vector(u16Len, u16) = @splat(1);
+pub const ZeroVec16Bit: @Vector(u16Len, u16) = @splat(0);
+pub const OneVec16Bit: @Vector(u16Len, u16) = @splat(1);
 
-pub const zeroVec32Bit: @Vector(u32Len, u32) = @splat(0);
-pub const oneVec32Bit: @Vector(u32Len, u32) = @splat(1);
+pub const ZeroVec32Bit: @Vector(u32Len, u32) = @splat(0);
+pub const OneVec32Bit: @Vector(u32Len, u32) = @splat(1);
 
-pub const zeroVec64Bit: @Vector(u64Len, u64) = @splat(0);
-pub const oneVec64Bit: @Vector(u64Len, u64) = @splat(1);
+pub const ZeroVec64Bit: @Vector(u64Len, u64) = @splat(0);
+pub const OneVec64Bit: @Vector(u64Len, u64) = @splat(1);
