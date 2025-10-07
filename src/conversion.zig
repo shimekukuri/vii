@@ -27,12 +27,21 @@ test "sliceAsVecSuceeds" {
     try testing.expect(@TypeOf(x) == *@Vector(suggestVectorLength(u8) orelse 1, u8));
 }
 
+pub inline fn VectorAlignment(comptime T: type) comptime_int {
+    return @alignOf(@Vector(suggestVectorLength(T) orelse 1, T));
+}
+
 ///Given T Describes a slice that's alignment matches that of it's vectors counterpart based upon available CPU features
 pub inline fn VectorAlignedSlice(comptime T: type) type {
     const vector_len = suggestVectorLength(T) orelse 1;
     const VectorType = @Vector(vector_len, T);
     const alignment = @alignOf(VectorType);
     return []align(alignment) T;
+}
+
+test "VectorAlignedSliceSucceeds" {
+    const x align(VectorAlignment(u8)) = [_]u8{ 1, 2, 3, 4, 5 };
+    std.debug.print("{any}", .{@alignOf(@TypeOf(x))});
 }
 
 pub fn optimizedVectorType(comptime T: type) type {
