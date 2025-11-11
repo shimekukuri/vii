@@ -5,9 +5,10 @@ const VectorAlignedSlice = conversion.VectorAlignedSlice;
 ///of the first Char
 pub inline fn findIndex(comptime T: type, source: VectorAlignedSlice(T), target: VectorAlignedSlice(T)) usize {
     _ = source;
+    _ = target;
     return 0;
 }
 
-pub inline fn rotateSliceGen(comptime T: typei, ) {
-
-}
+//pub inline fn rotateSliceGen(comptime T: typei, ) {
+//
+//}
